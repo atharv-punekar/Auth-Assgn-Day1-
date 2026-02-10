@@ -1,42 +1,37 @@
-📌 Project Overview
+## 📌 Project Overview
 
 This project demonstrates a full authentication flow:
 
-✔ User Registration
+### ✔ **User Registration**
 
-Accepts username + password
+* Accepts `username` + `password`
+* Hashes password using **bcrypt**
+* Stores user inside **in-memory DB**
 
-Hashes password using bcrypt
+### ✔ **User Login (Step 1)**
 
-Stores user inside in-memory DB
+* Validates username
+* Compares password with hashed password
+* Generates a **6-digit OTP**
+* Stores OTP temporarily
+* Sends OTP (simulated in console)
 
-✔ User Login (Step 1)
+### ✔ **OTP Verification (Step 2)**
 
-Validates username
+* Confirms OTP correctness
+* Finalizes login
+* Clears OTP (one-time use)
 
-Compares password with hashed password
+### ✔ **Frontend UI**
 
-Generates a 6-digit OTP
+* Simple HTML + Fetch API UI
+* Register → Login → Verify OTP flow
 
-Stores OTP temporarily
+---
 
-Sends OTP (simulated in console)
+# 🧱 Project Structure
 
-✔ OTP Verification (Step 2)
-
-Confirms OTP correctness
-
-Finalizes login
-
-Clears OTP (one-time use)
-
-✔ Frontend UI
-
-Simple HTML + Fetch API UI
-
-Register → Login → Verify OTP flow
-
-🧱 Project Structure
+```
 minimal-auth/
  └── src/
       ├── routes/
@@ -46,133 +41,144 @@ minimal-auth/
       └── server.js
  └── public/
       └── index.html
+```
 
-server.js
+### **server.js**
 
 Main server file. Loads Express, parses JSON, serves static UI, and mounts authentication routes.
 
-routes/auth.js
+### **routes/auth.js**
 
 Contains all authentication routes:
 
-POST /auth/register
+* POST `/auth/register`
+* POST `/auth/login`
+* POST `/auth/verify-otp`
 
-POST /auth/login
-
-POST /auth/verify-otp
-
-utils/otp.js
+### **utils/otp.js**
 
 Generates a random 6-digit OTP.
 
-public/index.html
+### **public/index.html**
 
 Minimal UI for registering, logging in, and verifying OTP.
 
-🔐 How Authentication Works
-1️⃣ Registration Flow
+---
 
-User enters username + password.
+# 🔐 How Authentication Works
 
-Password is hashed with bcrypt using:
+## 1️⃣ Registration Flow
 
-bcrypt.hash(password, 10)
+* User enters username + password.
+* Password is hashed with **bcrypt** using:
 
+  ```js
+  bcrypt.hash(password, 10)
+  ```
+* Hashed password stored as:
 
-Hashed password stored as:
+  ```js
+  users[username] = { hash: '...' }
+  ```
 
-users[username] = { hash: '...' }
+## 2️⃣ Login Flow
 
-2️⃣ Login Flow
+* User enters username + password.
+* Server validates username.
+* Password is compared using:
 
-User enters username + password.
+  ```js
+  bcrypt.compare(plain, hash)
+  ```
+* If correct → OTP generated.
+* OTP saved to user object.
+* OTP printed in backend console (simulated SMS).
 
-Server validates username.
+## 3️⃣ OTP Verification
 
-Password is compared using:
+* User enters username + OTP.
+* Server checks if OTP matches.
+* OTP is cleared after use.
+* Login successful.
 
-bcrypt.compare(plain, hash)
+---
 
+# 🚀 Running the Project
 
-If correct → OTP generated.
+## 📌 1. Install dependencies
 
-OTP saved to user object.
-
-OTP printed in backend console (simulated SMS).
-
-3️⃣ OTP Verification
-
-User enters username + OTP.
-
-Server checks if OTP matches.
-
-OTP is cleared after use.
-
-Login successful.
-
-🚀 Running the Project
-📌 1. Install dependencies
+```bash
 npm install
+```
 
-📌 2. Start the server
+## 📌 2. Start the server
+
+```bash
 node src/server.js
-
+```
 
 If successful:
 
+```
 Server running at http://localhost:3000
+```
 
-📌 3. Open the UI
+## 📌 3. Open the UI
 
 Visit:
 
+```
 http://localhost:3000/index.html
+```
 
-💻 Testing the Authentication Flow
-🟦 Step 1: Register
+---
 
-Enter username + password → click Register
+# 💻 Testing the Authentication Flow
+
+## 🟦 Step 1: Register
+
+Enter username + password → click **Register**
 
 Expected:
 
+```
 User registered
-
+```
 
 Backend logs:
 
+```
 Current Users DB: { yourUser: { hash: "...bcryptHash..." } }
+```
 
-🟩 Step 2: Login
+---
 
-Enter username + password → click Login
+## 🟩 Step 2: Login
+
+Enter username + password → click **Login**
 
 Expected:
 
+```
 OTP sent to your device
-
+```
 
 Backend prints something like:
 
+```
 Generated OTP: 482913
+```
 
-🟧 Step 3: Verify OTP
+---
 
-Enter same username + OTP → click Verify
+## 🟧 Step 3: Verify OTP
+
+Enter *same username* + OTP → click **Verify**
 
 Expected:
 
+```
 Login Successful
-
-📦 In-Memory Database
-
-The "database" is simply a JS object:
-
-{
-  username: {
-    hash: "...hashedPassword...",
-    otp: "123456"
-  }
-}
+```
 
 
-⚠️ This resets every time server restarts.
