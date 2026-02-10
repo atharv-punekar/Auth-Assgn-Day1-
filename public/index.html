@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Minimal Auth UI</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .box { width: 300px; margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 6px; }
+    input { width: 100%; padding: 8px; margin: 6px 0; }
+    button { padding: 8px 12px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h2>Minimal Auth System</h2>
+
+  <!-- Register -->
+  <div class="box">
+    <h3>Register</h3>
+    <input id="regUser" type="text" placeholder="Username">
+    <input id="regPass" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <p id="regMsg"></p>
+  </div>
+
+  <!-- Login -->
+  <div class="box">
+    <h3>Login</h3>
+    <input id="loginUser" type="text" placeholder="Username">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="loginMsg"></p>
+  </div>
+
+  <!-- OTP -->
+  <div class="box">
+    <h3>Verify OTP</h3>
+    <input id="otpUser" type="text" placeholder="Username">
+    <input id="otpVal" type="text" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify</button>
+    <p id="otpMsg"></p>
+  </div>
+
+
+<script>
+async function register() {
+  const username = document.getElementById('regUser').value;
+  const password = document.getElementById('regPass').value;
+
+  const res = await fetch("http://localhost:3000/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+  document.getElementById("regMsg").innerText = data.message;
+}
+
+async function login() {
+  const username = document.getElementById('loginUser').value;
+  const password = document.getElementById('loginPass').value;
+
+  const res = await fetch("http://localhost:3000/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+  document.getElementById("loginMsg").innerText = data.message;
+}
+
+async function verifyOTP() {
+  const username = document.getElementById('otpUser').value;
+  const otp = document.getElementById('otpVal').value;
+
+  const res = await fetch("http://localhost:3000/auth/verify-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, otp })
+  });
+
+  const data = await res.json();
+  document.getElementById("otpMsg").innerText = data.message;
+}
+</script>
+
+</body>
+</html>
